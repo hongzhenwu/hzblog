@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+  <display-name></display-name>	
+  
+    <!-- 配置用于创建ApplicationContext对象的监听器,用于启动并初始化spring容器，这个监听器创建的事一个根webapplicationContext
+     -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!--  与上面ContextLoaderListener一起，完成springIOC容器的初始化，主要是：说明spring配置文件的位置，
+	在这个配置文件中配置有spring容器的初始化的参数信息
+	 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+	
+	<!-- SpringMVC的前端控制器:这个servlet也会创建一个webApplicationContext,默认会从WEB_INF/路径加载一个  
+	[<servlet-name>-serverlet.xml]的配置文件，也可以使用<init-param>显式配置配置文件的位置
+	每一个 DispatcherServlet 都拥有自己的 WebApplicationContext，这个 WebApplicationContext继承了根 WebApplicationContext 
+	定义的所有 bean.
+	DispatcherServlet 在初始化时，Spring MVC 会查找 web 应用 WEB_INF 目录下的[servlet-name]-servlet.xml 
+	并创建在此文件定义的 bean,若在全局范围里有一个名称相同的 bean，全局范围的 bean 会被覆盖掉。【这里我其实不是很理解全局
+	范围的bean会被覆盖掉的意思??】
+	问题：servlet如何配置初始化参数，该参数是一个对象？查看DispatcherServlet的有参构造函数：可以找到这个说明应该servlet3以上支持
+	This constructor is useful in Servlet 3.0+ environments where 
+	instance-based registration of servlets is possible through the {@link ServletContext#addServlet} API.
+	 -->
+	 <servlet>
+        <servlet-name>springMVC</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+       <!--   <init-param></init-param>  -->
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springMVC</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+	
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>

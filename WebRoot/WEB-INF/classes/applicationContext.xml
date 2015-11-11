@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation=" 
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+  
+   <!-- 这个是spring环境的配置文件 ：我个人认为这个文件配置的信息可以在springMVC配置文件中配置，可以不要
+         这个，根据：这个配置文件是contextloaderListener的,使用这个监听器是用于启动spring容器，而springMVC也有这个
+       之所以有这个是因为这个：通常spring是可以与其他的mvc,持久层框架整合，那就要通过这个监听器启动容器。
+   -->
+   <!-- spring  的特点就是可以对bean进行管理，从创建到死亡
+         1、这个配置的作用是让spring自动扫描指定的包及其子包中被特定注解标识的类，并在容器中创建该类的实例。
+         这里的特定注解有@compoment  @service   @controller  @respository 
+        这个配置还有其他的子元素可以配置
+         2、这个是属于配置spring搭建的环境的参数，我认为这个
+    -->
+   <context:component-scan base-package="com.hzblog">
+       <!-- 这个子元素的作用是告诉spring在进行扫描时那些东西不要扫描，具体信息查看官方文档  -->
+       <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+   </context:component-scan>
+
+   <!-- 这个配置的作用是告诉spring 我们要要使用基于注解的自动装配
+    -->
+   <context:annotation-config />
+   
+   
+   	<!-- 
+   	     将mybatis配置文件的部分内容都移到spring的配置文件中配置，mybatis是持久层框架。
+		配置Spring与MyBatis整合操作 注意添加相关的jar 包
+			 1: 配置DataSource数据源,替换MyBatis的数据连接信息(加载C3p0.jar) 
+			 2：配置properties工具类来加载properties配置文件
+			 3: 配置SqlSessionFactoryBean,
+			 4: 配置(基于JDBC的)事务管理器，与JDBCTemplate共用相同的事务管理器
+			 5: 配置通知
+			 6: 配置切面表达式
+	-->
+   <!--  下面配置的这个bean的作用是用于加载属性配置文件，该属性文件的内容可以在这个xml中得到 -->
+   	<bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+		<property name="location" value="classpath:conn.properties" />
+	</bean>
+	<!-- 配置数据源 -->
+	<bean id="datasource0" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="jdbcUrl" value="${jdbcUrl}" />
+		<property name="driverClass" value="${driverClass}" />
+		<property name="user" value="${user}" />
+		<property name="password" value="${password}" />
+		<!--连接池中保留的最小连接数。 -->
+		<property name="minPoolSize" value="10" />
+		<!--连接池中保留的最大连接数。Default: 15 -->
+		<property name="maxPoolSize" value="100" />
+		<!--最大空闲时间,1800秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+		<property name="maxIdleTime" value="1800" />
+		<!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+		<property name="acquireIncrement" value="3" />
+		<property name="maxStatements" value="1000" />
+		<property name="initialPoolSize" value="10" />
+		<!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+		<property name="idleConnectionTestPeriod" value="60" />
+		<!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30 -->
+		<property name="acquireRetryAttempts" value="30" />
+		<property name="breakAfterAcquireFailure" value="true" />
+		<property name="testConnectionOnCheckout" value="false" />
+	</bean>
+
+	
+
+
+
+</beans>
+
+
+
+
