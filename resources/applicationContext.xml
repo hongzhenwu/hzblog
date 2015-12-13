@@ -40,7 +40,10 @@
 			 5: 配置通知
 			 6: 配置切面表达式
 	-->
-   <!--  下面配置的这个bean的作用是用于加载属性配置文件，该属性文件的内容可以在这个xml中得到 -->
+   <!--  下面配置的这个bean的作用是用于加载属性配置文件，该属性文件的内容可以在这个xml中用
+          下面这种以<bean>元素配置的方式是2.5版本以前用的，之后的版本有个更简单的配置方式
+          <context:property-placeholder  location="" />
+    -->
    	<bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
 		<property name="location" value="classpath:conn.properties" />
 	</bean>
@@ -67,10 +70,28 @@
 		<property name="breakAfterAcquireFailure" value="true" />
 		<property name="testConnectionOnCheckout" value="false" />
 	</bean>
-
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:myBatis-config.xml" />
+		<property name="dataSource" ref="dataSource0" />
+	</bean>
 	
-
-
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 此事务管理器是JDBC事务管理器,是不能识别 sqlSessionFactory 只需要依赖dataSource即可 -->
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<tx:advice id="advice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED"/>
+			<tx:method name="update*" propagation="REQUIRED"/>
+			<tx:method name="delete*" propagation="REQUIRED"/>
+			<tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<aop:config>
+		<aop:advisor advice-ref="advice" pointcut="execution(* com.hzblog.service.impl.*.*(..))"/>
+	</aop:config>
 
 </beans>
 

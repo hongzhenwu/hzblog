@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 当前映射文件加载到主配置文件中,此映射文件类似Hibernate映射,里面有 属性与列的对应,myBatis中还有sql语句 -->
+<mapper namespace="com.hzblog.bean.article.Article">
+
+	<resultMap type="article" id="articleBaseMap">
+		<id column="gid" property="gid"/>
+		<result column="gname" property="gname"/>
+	</resultMap>
+	<resultMap type="grade"  id="gradeMap"  extends="gradeBaseMap">
+		<!-- 指定集合中对象的类型 ,同理也采用级联查询实现-->
+		<collection property="studentList" resultMap="mybatis.model.Student.studentBaseMap"  />
+	</resultMap>
+	<!-- 
+	<select id="get" parameterType="int" resultType="grade">
+		select * from grade where gid=#{gid}
+	</select>
+	 -->
+	<insert id="saveArticle"></insert>
+
+</mapper>
